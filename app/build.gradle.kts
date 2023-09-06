@@ -138,4 +138,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:$retrofit2Version")
     implementation("com.squareup.retrofit2:converter-gson:$retrofit2Version")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+
+    //permission requester
+    implementation("androidx.activity:activity-compose:1.8.0-alpha07")
 }

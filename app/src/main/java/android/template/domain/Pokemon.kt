@@ -6,4 +6,4 @@ data class Pokemon(
     val urlImg: String,
 )
 
-val FakePokemon = Pokemon(0, name = "Fake Bulbasaur", urlImg = "https://pokeapi.co/api/v2/pokemon/fakeurl")
+val FakePokemon = Pokemon(0, name = "Loading Pokemon...", urlImg = "https://pokeapi.co/api/v2/pokemon/fakeurl")

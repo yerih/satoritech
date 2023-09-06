@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class MyModelViewModel @Inject constructor(
@@ -51,7 +52,9 @@ class MyModelViewModel @Inject constructor(
 
     data class UiState(
         val loading: Boolean = true,
-        val list: List<Pokemon> = listOf(FakePokemon)
+        val showImage: Boolean = false,
+        val list: List<Pokemon> = listOf(),
+        val pokemon: Pokemon = FakePokemon
     )
     val state = MutableStateFlow(UiState())
 
@@ -62,15 +65,21 @@ class MyModelViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     init {
+        getPokemon()
+    }
+
+    fun showImage() = state.update { it.copy(showImage = true) }
+
+    fun getPokemon() {
         viewModelScope.launch {
-            val resp = myModelRepository.getPokemons()
-            if(resp.isValid())
-                state.update { it.copy(list = resp.value as List<Pokemon>, loading = false) }
-                    .apply {
-                        log(resp.value.toString())
-                    }
-            else
-                _event.send(ToastMessage(resp.error.toString()))
+            myModelRepository.getPokemons().also { resp ->
+                if (resp.isValid()) {
+                    val pokemon = resp.value!![(Random.nextInt(resp.value.size))]
+                        .apply { log(this.toString()) }
+                    state.update { it.copy(pokemon = pokemon, loading = false) }
+                } else
+                    _event.send(ToastMessage(resp.error.toString()))
+            }
         }
     }
     fun addMyModel(name: String) {
