@@ -19,19 +19,11 @@ package android.template.ui.mymodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import android.template.data.MyModelRepository
 import android.template.domain.FakePokemon
 import android.template.domain.Pokemon
 import android.template.log
-import android.template.ui.mymodel.MyModelUiState.Error
-import android.template.ui.mymodel.MyModelUiState.Loading
-import android.template.ui.mymodel.MyModelUiState.Success
 import android.template.ui.mymodel.MyModelViewModel.UiEvent.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,11 +36,6 @@ import kotlin.random.Random
 class MyModelViewModel @Inject constructor(
     private val myModelRepository: MyModelRepository
 ) : ViewModel() {
-
-    val uiState: StateFlow<MyModelUiState> = myModelRepository
-        .myModels.map<List<String>, MyModelUiState>(::Success)
-        .catch { emit(Error(it)) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), Loading)
 
     data class UiState(
         val loading: Boolean = true,
@@ -68,29 +55,16 @@ class MyModelViewModel @Inject constructor(
         getPokemon()
     }
 
-    fun showImage() = state.update { it.copy(showImage = true) }
-
     fun getPokemon() {
         viewModelScope.launch {
             myModelRepository.getPokemons().also { resp ->
                 if (resp.isValid()) {
                     val pokemon = resp.value!![(Random.nextInt(resp.value.size))]
-                        .apply { log(this.toString()) }
                     state.update { it.copy(pokemon = pokemon, loading = false) }
                 } else
                     _event.send(ToastMessage(resp.error.toString()))
             }
         }
     }
-    fun addMyModel(name: String) {
-        viewModelScope.launch {
-            myModelRepository.add(name)
-        }
-    }
 }
 
-sealed interface MyModelUiState {
-    object Loading : MyModelUiState
-    data class Error(val throwable: Throwable) : MyModelUiState
-    data class Success(val data: List<String>) : MyModelUiState
-}

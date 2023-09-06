@@ -17,7 +17,6 @@ import androidx.core.app.ActivityCompat
 fun PermissionRequester(context: Context, onLocationChanged: (Location)->Unit){
     val permLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) {}
 
-//    fun launch(context: Context){
     LaunchedEffect(key1 = Unit){
 
         if (ActivityCompat.checkSelfPermission(
