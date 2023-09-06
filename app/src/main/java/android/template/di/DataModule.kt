@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package android.template.data.di
+package android.template.di
 
 import dagger.Binds
 import dagger.Module
@@ -24,11 +24,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import android.template.data.MyModelRepository
 import android.template.data.DefaultMyModelRepository
-import android.template.data.remote.PokemonResponse
-import android.template.data.remote.PokemonService
-import dagger.Provides
-import retrofit2.Retrofit
-import retrofit2.create
+import android.template.domain.Pokemon
+import android.template.domain.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -46,6 +43,9 @@ interface DataModule {
 
 class FakeMyModelRepository @Inject constructor() : MyModelRepository {
     override val myModels: Flow<List<String>> = flowOf(fakeMyModels)
+    override suspend fun getPokemons(): Response<List<Pokemon>> {
+        TODO("Not yet implemented")
+    }
 
 
     override suspend fun add(name: String) {

@@ -16,64 +16,129 @@
 
 package android.template.ui.mymodel
 
+import android.template.data.remote.PokemonService
+import android.template.domain.FakePokemon
+import android.template.domain.Pokemon
+import android.template.ui.mymodel.MyModelViewModel.UiEvent.*
 import android.template.ui.theme.MyApplicationTheme
+import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun MyModelScreen(modifier: Modifier = Modifier, viewModel: MyModelViewModel = hiltViewModel()) {
+fun MyModelScreen(
+    modifier: Modifier = Modifier,
+    viewModel: MyModelViewModel = hiltViewModel(),
+) {
     val items by viewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
     if (items is MyModelUiState.Success) {
         MyModelScreen(
+            modifier = modifier,
+            pokemon = state.list[0],//FakePokemon,
             items = (items as MyModelUiState.Success).data,
             onSave = viewModel::addMyModel,
-            modifier = modifier
         )
     }
+
+    LaunchedEffect(key1 = Unit){
+        viewModel.event.collectLatest {event ->
+            when(event){
+                is ToastMessage -> Toast.makeText(context, event.msg, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
 }
 
 @Composable
 internal fun MyModelScreen(
     items: List<String>,
+    modifier: Modifier = Modifier,
     onSave: (name: String) -> Unit,
-    modifier: Modifier = Modifier
+    pokemon: Pokemon,
 ) {
-    Column(modifier) {
-        var nameMyModel by remember { mutableStateOf("Compose") }
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            TextField(
-                value = nameMyModel,
-                onValueChange = { nameMyModel = it }
-            )
-
-            Button(modifier = Modifier.width(96.dp), onClick = { onSave(nameMyModel) }) {
-                Text("Save")
+    Box(
+        modifier = Modifier.padding(10.dp),
+        contentAlignment = Alignment.Center
+    ){
+        Card(
+            modifier = Modifier.wrapContentSize()
+        ){
+            Column(
+                modifier = Modifier.padding(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Card(
+                    modifier = Modifier
+                ){
+                    AsyncImage(
+                        model = pokemon.urlImg,
+                        contentDescription = "pokemon image",
+                        modifier = Modifier.fillMaxWidth()
+                            .background(Color.LightGray)
+                            .aspectRatio(1f)
+                    )
+                }
+                Text(pokemon.name)
             }
         }
-        items.forEach {
-            Text("Saved item: $it")
-        }
     }
+
+//    Column(modifier) {
+//        var nameMyModel by remember { mutableStateOf("Compose") }
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(bottom = 24.dp),
+//            horizontalArrangement = Arrangement.spacedBy(16.dp)
+//        ) {
+//            TextField(
+//                value = nameMyModel,
+//                onValueChange = { nameMyModel = it }
+//            )
+//
+//            Button(modifier = Modifier.width(96.dp), onClick = { onSave(nameMyModel) }) {
+//                Text("Save")
+//            }
+//        }
+//        items.forEach {
+//            Text("Saved item: $it")
+//        }
+//    }
 }
 
 // Previews
@@ -82,7 +147,11 @@ internal fun MyModelScreen(
 @Composable
 private fun DefaultPreview() {
     MyApplicationTheme {
-        MyModelScreen(listOf("Compose", "Room", "Kotlin"), onSave = {})
+        MyModelScreen(
+            items = emptyList(),
+            pokemon = FakePokemon,
+            onSave = {}
+        )
     }
 }
 
@@ -90,6 +159,11 @@ private fun DefaultPreview() {
 @Composable
 private fun PortraitPreview() {
     MyApplicationTheme {
-        MyModelScreen(listOf("Compose", "Room", "Kotlin"), onSave = {})
+
+        MyModelScreen(
+            items = emptyList(),
+            pokemon = FakePokemon,
+            onSave = {}
+        )
     }
 }

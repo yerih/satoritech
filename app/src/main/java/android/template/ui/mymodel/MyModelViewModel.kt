@@ -26,14 +26,17 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import android.template.data.MyModelRepository
-import android.template.data.remote.PokemonService
+import android.template.domain.FakePokemon
+import android.template.domain.Pokemon
 import android.template.log
 import android.template.ui.mymodel.MyModelUiState.Error
 import android.template.ui.mymodel.MyModelUiState.Loading
 import android.template.ui.mymodel.MyModelUiState.Success
-import kotlinx.coroutines.Dispatchers
-import retrofit2.Retrofit
-import retrofit2.create
+import android.template.ui.mymodel.MyModelViewModel.UiEvent.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,10 +49,28 @@ class MyModelViewModel @Inject constructor(
         .catch { emit(Error(it)) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), Loading)
 
+    data class UiState(
+        val loading: Boolean = true,
+        val list: List<Pokemon> = listOf(FakePokemon)
+    )
+    val state = MutableStateFlow(UiState())
+
+    sealed interface UiEvent {
+        data class ToastMessage(val msg:  String): UiEvent
+    }
+    private val _event = Channel<UiEvent>()
+    val event = _event.receiveAsFlow()
+
     init {
         viewModelScope.launch {
-            val p = PokemonService.buildRetrofitWith().create<PokemonService>()
-            log(p.getPokemons().toString())
+            val resp = myModelRepository.getPokemons()
+            if(resp.isValid())
+                state.update { it.copy(list = resp.value as List<Pokemon>, loading = false) }
+                    .apply {
+                        log(resp.value.toString())
+                    }
+            else
+                _event.send(ToastMessage(resp.error.toString()))
         }
     }
     fun addMyModel(name: String) {

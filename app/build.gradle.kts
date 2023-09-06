@@ -129,6 +129,8 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)
 
+    //Coil images
+    implementation("io.coil-kt:coil-compose:2.2.2")
 
     //Retrofit
     val retrofit2Version = "2.9.0"

@@ -21,8 +21,8 @@ import dagger.Module
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import android.template.data.MyModelRepository
-import android.template.data.di.DataModule
-import android.template.data.di.FakeMyModelRepository
+import android.template.di.DataModule
+import android.template.di.FakeMyModelRepository
 
 @Module
 @TestInstallIn(

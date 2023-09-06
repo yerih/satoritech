@@ -26,10 +26,13 @@ interface PokemonService {
                 .build()
         }
 
+        fun buildUrlImgById(id: Int) = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png"
+
     }
 
 //    @GET("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0")
     @GET("pokemon?limit=100000&offset=0")
     suspend fun getPokemons(): PokemonResponse
+
 
 }

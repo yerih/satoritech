@@ -20,28 +20,35 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import android.template.data.local.database.MyModel
 import android.template.data.local.database.MyModelDao
-import android.template.data.remote.PokemonResponse
 import android.template.data.remote.PokemonService
-import android.template.log
+import android.template.domain.Pokemon
+import android.template.domain.Response
 import javax.inject.Inject
 
 interface MyModelRepository {
     val myModels: Flow<List<String>>
 
-//    suspend fun getPokemons(): PokemonResponse
+    suspend fun getPokemons(): Response<List<Pokemon>>
 
     suspend fun add(name: String)
 }
 
 class DefaultMyModelRepository @Inject constructor(
     private val myModelDao: MyModelDao,
-//    private val remoteService: PokemonService
+    private val remoteService: PokemonService
 ) : MyModelRepository {
 
     override val myModels: Flow<List<String>> =
         myModelDao.getMyModels().map { items -> items.map { it.name } }
 
-//    override suspend fun getPokemons() = remoteService.getPokemons().apply { log(this.toString()) }
+    override suspend fun getPokemons(): Response<List<Pokemon>>{
+        return try {
+            Response(remoteService.getPokemons().toDomain())
+        }catch (e: Exception){
+            Response(null, Error(e.message.toString()))
+        }
+    }
+
 
     override suspend fun add(name: String) {
         myModelDao.insertMyModel(MyModel(name = name))
