@@ -30,7 +30,9 @@ fun MainNavigation() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "main") {
-        composable("main") { MyModelScreen() }
+        composable("main") {
+            MyModelScreen()
+        }
         // TODO: Add more destinations
     }
 }

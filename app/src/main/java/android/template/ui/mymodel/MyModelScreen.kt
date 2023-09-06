@@ -18,9 +18,9 @@ package android.template.ui.mymodel
 
 import android.template.domain.FakePokemon
 import android.template.domain.Pokemon
-import android.template.log
 import android.template.ui.mymodel.MyModelViewModel.UiEvent.*
-import android.template.ui.permission.PermissionRequester
+import android.template.ui.notifications.PokemonNotificationService
+import android.template.ui.permissions.PermissionRequester
 import android.template.ui.theme.MyApplicationTheme
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -55,10 +55,11 @@ fun MyModelScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val notificationService = PokemonNotificationService(context)
 
     MyModelScreen(
         pokemon = state.pokemon,
-        onClickShowBtn = viewModel::getPokemon
+        onClickShowBtn = viewModel::getPokemon,
     )
 
     LaunchedEffect(key1 = Unit){
@@ -69,12 +70,11 @@ fun MyModelScreen(
         }
     }
 
-
     PermissionRequester(context = context) {
-        Toast.makeText(context, "location changed: $it", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "location changed!", Toast.LENGTH_SHORT).show()
+        notificationService.showBasicNotification()
         viewModel.getPokemon()
     }
-
 
 }
 
@@ -119,8 +119,6 @@ internal fun MyModelScreen(
         }
     }
 }
-
-// Previews
 
 @Preview(showBackground = true)
 @Composable

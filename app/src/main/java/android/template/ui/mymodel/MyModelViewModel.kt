@@ -52,7 +52,7 @@ class MyModelViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     init {
-        getPokemon()
+//        getPokemon()
     }
 
     fun getPokemon() {
