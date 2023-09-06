@@ -104,35 +104,9 @@ fun MyModelScreen(
     }
 
 
-//        PermissionRequester(context = context){
-//                Toast.makeText(context, "location changed: $it", Toast.LENGTH_SHORT).show()
-//                viewModel.getPokemon()
-//        }
-
-    LaunchedEffect(key1 = Unit){
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            permLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-            permLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
-
-        }else{
-
-            (context.getSystemService(Context.LOCATION_SERVICE) as LocationManager).requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                0,
-                10f,
-                LocationListener { l ->
-                    Toast.makeText(context, "location changed: $l", Toast.LENGTH_SHORT).show()
-                    viewModel.getPokemon()
-                }
-            )
-        }
+    PermissionRequester(context = context) {
+        Toast.makeText(context, "location changed: $it", Toast.LENGTH_SHORT).show()
+        viewModel.getPokemon()
     }
 
 
