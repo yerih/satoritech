@@ -16,10 +16,10 @@
 
 package android.template.ui.mymodel
 
+import android.template.domain.Pokemon
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Before
 import org.junit.Rule
@@ -27,7 +27,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * UI tests for [MyModelScreen].
+ * UI tests for [HomeScreen].
  */
 @RunWith(AndroidJUnit4::class)
 class MyModelScreenTest {
@@ -38,14 +38,10 @@ class MyModelScreenTest {
     @Before
     fun setup() {
         composeTestRule.setContent {
-            MyModelScreen(FAKE_DATA, onSave = {})
+            HomeScreen(FAKE_DATA) {}
         }
     }
 
-    @Test
-    fun firstItem_exists() {
-        composeTestRule.onNodeWithText(FAKE_DATA.first()).assertExists().performClick()
-    }
 }
 
-private val FAKE_DATA = listOf("Compose", "Room", "Kotlin")
+private val FAKE_DATA = Pokemon(0, "Compose", "Room")

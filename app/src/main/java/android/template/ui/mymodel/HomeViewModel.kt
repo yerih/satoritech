@@ -23,8 +23,7 @@ import kotlinx.coroutines.launch
 import android.template.data.MyModelRepository
 import android.template.domain.FakePokemon
 import android.template.domain.Pokemon
-import android.template.log
-import android.template.ui.mymodel.MyModelViewModel.UiEvent.*
+import android.template.ui.mymodel.HomeViewModel.UiEvent.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -33,7 +32,7 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 @HiltViewModel
-class MyModelViewModel @Inject constructor(
+class HomeViewModel @Inject constructor(
     private val myModelRepository: MyModelRepository
 ) : ViewModel() {
 
@@ -50,10 +49,6 @@ class MyModelViewModel @Inject constructor(
     }
     private val _event = Channel<UiEvent>()
     val event = _event.receiveAsFlow()
-
-    init {
-//        getPokemon()
-    }
 
     fun getPokemon() {
         viewModelScope.launch {

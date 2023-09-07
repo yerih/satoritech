@@ -2,10 +2,8 @@ package android.template.ui.notifications
 
 import android.app.NotificationManager
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.template.R
-import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import kotlin.random.Random

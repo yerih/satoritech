@@ -16,14 +16,11 @@
 
 package android.template.ui
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import android.template.ui.mymodel.MyModelScreen
+import android.template.ui.mymodel.HomeScreen
 
 @Composable
 fun MainNavigation() {
@@ -31,7 +28,7 @@ fun MainNavigation() {
 
     NavHost(navController = navController, startDestination = "main") {
         composable("main") {
-            MyModelScreen()
+            HomeScreen()
         }
         // TODO: Add more destinations
     }

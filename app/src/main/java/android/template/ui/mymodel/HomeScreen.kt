@@ -18,7 +18,7 @@ package android.template.ui.mymodel
 
 import android.template.domain.FakePokemon
 import android.template.domain.Pokemon
-import android.template.ui.mymodel.MyModelViewModel.UiEvent.*
+import android.template.ui.mymodel.HomeViewModel.UiEvent.*
 import android.template.ui.notifications.PokemonNotificationService
 import android.template.ui.permissions.PermissionRequester
 import android.template.ui.theme.MyApplicationTheme
@@ -50,14 +50,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import kotlinx.coroutines.flow.collectLatest
 @Composable
-fun MyModelScreen(
-    viewModel: MyModelViewModel = hiltViewModel(),
+fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val notificationService = PokemonNotificationService(context)
 
-    MyModelScreen(
+    HomeScreen(
         pokemon = state.pokemon,
         onClickShowBtn = viewModel::getPokemon,
     )
@@ -79,7 +79,7 @@ fun MyModelScreen(
 }
 
 @Composable
-internal fun MyModelScreen(
+internal fun HomeScreen(
     pokemon: Pokemon,
     onClickShowBtn: () -> Unit = {},
 ) {
@@ -123,11 +123,11 @@ internal fun MyModelScreen(
 @Preview(showBackground = true)
 @Composable
 private fun DefaultPreview() {
-    MyApplicationTheme { MyModelScreen(pokemon = FakePokemon,) }
+    MyApplicationTheme { HomeScreen(pokemon = FakePokemon,) }
 }
 
 @Preview(showBackground = true, widthDp = 480)
 @Composable
 private fun PortraitPreview() {
-    MyApplicationTheme { MyModelScreen(pokemon = FakePokemon) }
+    MyApplicationTheme { HomeScreen(pokemon = FakePokemon) }
 }
