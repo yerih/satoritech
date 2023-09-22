@@ -62,19 +62,17 @@ fun HomeScreen(
         onClickShowBtn = viewModel::getPokemon,
     )
 
+    PermissionRequester { viewModel.getLocation() }
+    
     LaunchedEffect(key1 = Unit){
         viewModel.event.collectLatest {event ->
             when(event){
                 is ToastMessage -> Toast.makeText(context, event.msg, Toast.LENGTH_SHORT).show()
+                is Notification -> notificationService.showBasicNotification()
             }
         }
     }
 
-    PermissionRequester(context = context) {
-        Toast.makeText(context, "location changed!", Toast.LENGTH_SHORT).show()
-        notificationService.showBasicNotification()
-        viewModel.getPokemon()
-    }
 
 }
 

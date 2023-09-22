@@ -16,6 +16,7 @@
 
 package com.satoritech.pokedex.di
 
+import android.location.LocationManager
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -24,6 +25,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import com.satoritech.pokedex.data.TaskRepository
 import com.satoritech.pokedex.data.DefaultTaskRepository
+import com.satoritech.pokedex.data.repositories.LocationRepository
+import com.satoritech.pokedex.data.repositories.LocationRepositoryImpl
 import com.satoritech.pokedex.domain.Pokemon
 import com.satoritech.pokedex.domain.Response
 import javax.inject.Inject
@@ -38,6 +41,12 @@ interface DataModule {
     fun bindsTaskRepository(
         taskRepository: DefaultTaskRepository
     ): TaskRepository
+
+    @Singleton
+    @Binds
+    fun provideLocationRepository(
+        locationRepository: LocationRepositoryImpl
+    ): LocationRepository
 
 }
 

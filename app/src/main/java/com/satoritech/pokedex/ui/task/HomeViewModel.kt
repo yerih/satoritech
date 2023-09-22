@@ -21,6 +21,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import com.satoritech.pokedex.data.TaskRepository
+import com.satoritech.pokedex.data.repositories.LocationRepository
 import com.satoritech.pokedex.domain.FakePokemon
 import com.satoritech.pokedex.domain.Pokemon
 import com.satoritech.pokedex.ui.task.HomeViewModel.UiEvent.*
@@ -33,7 +34,8 @@ import kotlin.random.Random
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val taskRepository: TaskRepository
+    private val taskRepository: TaskRepository,
+    private val locationRepository: LocationRepository
 ) : ViewModel() {
 
     data class UiState(
@@ -46,6 +48,7 @@ class HomeViewModel @Inject constructor(
 
     sealed interface UiEvent {
         data class ToastMessage(val msg:  String): UiEvent
+        data object Notification : UiEvent
     }
     private val _event = Channel<UiEvent>()
     val event = _event.receiveAsFlow()
@@ -58,6 +61,20 @@ class HomeViewModel @Inject constructor(
                     state.update { it.copy(pokemon = pokemon, loading = false) }
                 } else
                     _event.send(ToastMessage(resp.error.toString()))
+            }
+        }
+    }
+
+    fun getLocation(){
+        viewModelScope.launch {
+            locationRepository.getLocation(
+                { viewModelScope.launch { _event.send(ToastMessage("location disabled")) } }
+            ){
+                viewModelScope.launch {
+                    _event.send(ToastMessage("location changed"))
+                    getPokemon()
+                    _event.send(Notification)
+                }
             }
         }
     }

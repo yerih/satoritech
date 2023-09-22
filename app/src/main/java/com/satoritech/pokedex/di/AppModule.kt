@@ -1,5 +1,8 @@
 package com.satoritech.pokedex.di
 
+import android.app.Application
+import android.content.Context
+import android.location.LocationManager
 import com.satoritech.pokedex.data.remote.PokemonService
 import dagger.Module
 import dagger.Provides
@@ -12,9 +15,15 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule{
 
+
     @Singleton
     @Provides
     fun providePokemonService(): PokemonService = PokemonService.buildRetrofitWith().create()
+
+    @Singleton
+    @Provides
+    fun provideLocationManager(app: Application): LocationManager = (app.applicationContext
+        .getSystemService(Context.LOCATION_SERVICE) as LocationManager)
 
 }
 

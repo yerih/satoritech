@@ -17,3 +17,7 @@ fun toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
         length
     ).show()
 }
+
+fun ViewModel.launch(action: ()->Unit){
+
+}
