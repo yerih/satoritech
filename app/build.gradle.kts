@@ -24,17 +24,17 @@ plugins {
 }
 
 android {
-    namespace = "android.template"
+    namespace = "com.satoritech.pokedex"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "android.template"
+        applicationId = "com.satoritech.pokedex"
         minSdk = 21
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "android.template.HiltTestRunner"
+        testInstrumentationRunner = "com.satoritech.pokedex.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }

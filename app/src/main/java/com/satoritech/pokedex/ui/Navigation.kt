@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-rootProject.name = "PokeDex"
+package com.satoritech.pokedex.ui
 
-include(":app")
+import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.satoritech.pokedex.ui.task.HomeScreen
+
+@Composable
+fun MainNavigation() {
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = "main") {
+        composable("main") {
+            HomeScreen()
+        }
+        // TODO: Add more destinations
+    }
+}

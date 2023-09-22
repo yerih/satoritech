@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-rootProject.name = "PokeDex"
+package com.satoritech.pokedex.testdi
 
-include(":app")
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
+import com.satoritech.pokedex.data.TaskRepository
+import com.satoritech.pokedex.di.DataModule
+import com.satoritech.pokedex.di.FakeTaskRepository
+
+@Module
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [DataModule::class]
+)
+interface FakeDataModule {
+
+    @Binds
+    abstract fun bindRepository(
+        fakeRepository: FakeTaskRepository
+    ): TaskRepository
+}
