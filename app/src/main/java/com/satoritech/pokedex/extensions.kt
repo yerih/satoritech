@@ -4,6 +4,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 fun Any.log(msg: String, tag: String = "TGB") = Log.i(tag, msg)
 
@@ -18,6 +21,6 @@ fun toast(msg: String, length: Int = Toast.LENGTH_SHORT) {
     ).show()
 }
 
-fun ViewModel.launch(action: ()->Unit){
+fun ViewModel.launch(action: suspend ()->Unit) = viewModelScope.launch { action() }
 
-}
+

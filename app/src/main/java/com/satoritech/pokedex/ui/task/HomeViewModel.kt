@@ -24,6 +24,7 @@ import com.satoritech.pokedex.data.TaskRepository
 import com.satoritech.pokedex.data.repositories.LocationRepository
 import com.satoritech.pokedex.domain.FakePokemon
 import com.satoritech.pokedex.domain.Pokemon
+import com.satoritech.pokedex.launch
 import com.satoritech.pokedex.ui.task.HomeViewModel.UiEvent.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,11 +67,11 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getLocation(){
-        viewModelScope.launch {
+        launch {
             locationRepository.getLocation(
-                { viewModelScope.launch { _event.send(ToastMessage("location disabled")) } }
+                { launch { _event.send(ToastMessage("location disabled")) } }
             ){
-                viewModelScope.launch {
+                launch {
                     _event.send(ToastMessage("location changed"))
                     getPokemon()
                     _event.send(Notification)
