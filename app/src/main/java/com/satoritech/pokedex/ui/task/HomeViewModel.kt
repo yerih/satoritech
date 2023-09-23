@@ -36,48 +36,49 @@ import kotlin.random.Random
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
-    private val locationRepository: LocationRepository
+    private val locationRepository: LocationRepository,
 ) : ViewModel() {
 
     data class UiState(
         val loading: Boolean = true,
         val showImage: Boolean = false,
         val list: List<Pokemon> = listOf(),
-        val pokemon: Pokemon = FakePokemon
+        val pokemon: Pokemon = FakePokemon,
     )
+
     val state = MutableStateFlow(UiState())
 
     sealed interface UiEvent {
-        data class ToastMessage(val msg:  String): UiEvent
+        data class ToastMessage(val msg: String) : UiEvent
         data object Notification : UiEvent
     }
+
     private val _event = Channel<UiEvent>()
     val event = _event.receiveAsFlow()
 
-    fun getPokemon() {
-        viewModelScope.launch {
-            taskRepository.getPokemons().also { resp ->
-                if (resp.isValid()) {
-                    val pokemon = resp.value!![(Random.nextInt(resp.value.size))]
-                    state.update { it.copy(pokemon = pokemon, loading = false) }
-                } else
-                    _event.send(ToastMessage(resp.error.toString()))
+    fun getPokemon() = viewModelScope.launch { getPokemonFromRepo() }
+
+    private suspend fun getPokemonFromRepo() = taskRepository.getPokemons().also { resp ->
+        when {
+            resp.isValid() -> {
+                val pokemon = resp.value!![(Random.nextInt(resp.value.size))]
+                state.update { it.copy(pokemon = pokemon, loading = false) }
             }
+            else -> _event.send(ToastMessage(resp.error.toString()))
         }
     }
 
-    fun getLocation(){
-        launch {
-            locationRepository.getLocation(
-                { launch { _event.send(ToastMessage("location disabled")) } }
-            ){
-                launch {
-                    _event.send(ToastMessage("location changed"))
-                    getPokemon()
-                    _event.send(Notification)
-                }
+    fun getLocation() = launch {
+        locationRepository.getLocation(
+            { launch { _event.send(ToastMessage("location disabled")) } }
+        ) {
+            launch {
+                getPokemonFromRepo()
+                _event.send(ToastMessage("location changed"))
+                _event.send(Notification)
             }
         }
+
     }
 }
 
