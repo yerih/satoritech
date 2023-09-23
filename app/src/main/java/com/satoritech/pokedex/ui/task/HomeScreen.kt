@@ -22,7 +22,6 @@ import com.satoritech.pokedex.ui.task.HomeViewModel.UiEvent.*
 import com.satoritech.pokedex.ui.notifications.PokemonNotificationService
 import com.satoritech.pokedex.ui.permissions.PermissionRequester
 import com.satoritech.pokedex.ui.theme.MyApplicationTheme
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,7 +48,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.satoritech.pokedex.toast
 import kotlinx.coroutines.flow.collectLatest
+
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
@@ -57,23 +59,18 @@ fun HomeScreen(
     val context = LocalContext.current
     val notificationService = PokemonNotificationService(context)
 
-    HomeScreen(
-        pokemon = state.pokemon,
-        onClickShowBtn = viewModel::getPokemon,
-    )
+    HomeScreen(pokemon = state.pokemon, onClickShowBtn = viewModel::getPokemon,)
 
     PermissionRequester { viewModel.getLocation() }
-    
+
     LaunchedEffect(key1 = Unit){
         viewModel.event.collectLatest {event ->
             when(event){
-                is ToastMessage -> Toast.makeText(context, event.msg, Toast.LENGTH_SHORT).show()
+                is ToastMessage -> toast(context, event.msg)
                 is Notification -> notificationService.showBasicNotification()
             }
         }
     }
-
-
 }
 
 @Composable
@@ -120,12 +117,8 @@ internal fun HomeScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun DefaultPreview() {
-    MyApplicationTheme { HomeScreen(pokemon = FakePokemon,) }
-}
+private fun DefaultPreview() { MyApplicationTheme { HomeScreen(pokemon = FakePokemon,) } }
 
 @Preview(showBackground = true, widthDp = 480)
 @Composable
-private fun PortraitPreview() {
-    MyApplicationTheme { HomeScreen(pokemon = FakePokemon) }
-}
+private fun PortraitPreview() { MyApplicationTheme { HomeScreen(pokemon = FakePokemon) } }
